@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.booway.pmanager.dao.ItemDao">
+	<resultMap type="com.booway.pmanager.entity.Item" id="itemMap">
+	<id property = "itemId" column = "PROJECT_ID"/>
+	<result property = "itemName" column = "PROJECT_NAME"/>
+	<result property = "parentId" column = "PARENT_ID"/>
+	<result property = "userId" column = "CREATE_ID"/>
+	<result property = "userName" column = "CREATE_NAME"/>
+	<result property = "deptId" column = "DEPT_ID"/>
+	<result property = "worker" column = "WORKER"/>	
+	</resultMap>
+	
+	<!-- 需要给前端的数据有：itemId,itemName,parentId,createName,worker -->
+	<sql id = "param">
+		PROJECT_ID,PROJECT_NAME,PARENT_ID,CREATE_NAME,WORKER
+	</sql>
+	
+	<!-- 添加新的项目 -->
+	<insert id="insertItem" parameterType="com.booway.pmanager.entity.Item">
+	insert into project values(#{itemId},#{itemName},
+	<if test = "parentId != null and parentId != ''">
+	#{parentId}
+	</if>
+	,#{userId},#{userName},#{deptId},#{worker},1,#{time});
+	</insert>
+	
+	<!-- 删除项目，连带底下的工程也删除 -->
+	<update id = "deleteItem" parameterType = "string">
+	update project set STATUS = 0 where PROJECT_ID = #{itemId} or PARENT_ID = #{itemId};	
+	</update>
+	
+	<!-- 编辑项目 -->
+	<update id = "editItem">
+	update project set PROJECT_NAME = #{itemName} , WORKER = #{worker} where PROJECT_ID = #{itemId};
+	</update> 
+	
+
+	
+	<!-- 根据项目id查询 -->
+	<select id = "getItemById" resultMap = "itemMap">
+	select <include refid = "param"/> from project where STATUS = 1 and PROJECT_ID = #{itemId};
+	</select>
+	
+	<!-- 不同角色不同展现 -->
+	<select id = "getItems" resultMap = "itemMap">
+	select <include refid = "param"/> from project where STATUS = 1 
+	<if test = "createName != null and createName != ''">
+		and CREATE_NAME = #{createName}
+	</if>
+	<if test = "deptId != null and deptId != ''">
+		and DEPT_ID = #{deptId}
+	</if>
+	<if test = "worker != null and worker != ''">
+		and WORKER = #{worker}
+	</if>
+	<if test = "itemName != null and itemName != ''">
+		and PROJECT_NAME like concat('%',#{itemName},'%');
+	</if>
+	</select>
+	
+	<select id = "checkName" resultType = "int">
+	select count(PROJECT_ID) from project where STATUS = 1 and PROJECT_NAME = #{itemName};
+	</select>
+	
+
+   	
+</mapper>

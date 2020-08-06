@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+							http://www.springframework.org/schema/beans/spring-beans.xsd 
+							http://www.springframework.org/schema/aop
+							http://www.springframework.org/schema/aop/spring-aop.xsd  
+							http://www.springframework.org/schema/jee 
+							http://www.springframework.org/schema/jee/spring-jee.xsd 
+							http://www.springframework.org/schema/lang 
+							http://www.springframework.org/schema/lang/spring-lang.xsd 
+							http://www.springframework.org/schema/context 
+							http://www.springframework.org/schema/context/spring-context.xsd 
+							http://www.springframework.org/schema/tx 
+							http://www.springframework.org/schema/tx/spring-tx.xsd 
+							http://www.springframework.org/schema/util 
+							http://www.springframework.org/schema/util/spring-util.xsd 
+							http://www.springframework.org/schema/mvc 
+							http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+							http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+						<!--  	
+							<import resource="classpath:META-INF/cxf/cxf.xml" />
+							<import resource="classpath:META-INF/cxf/cxf-servlet.xml" /> -->
+						<!-- <jaxws:endpoint id = "loginService" implementor = "#UserService" address = "/login"/> -->	
+							<jaxws:client id = "userClient" serviceClass = "com.booway.umanager.service.UserService" address = "http://localhost:8080/UserManager/webservice/login?wsdl"/>
+							<jaxws:client id = "dpetClient" serviceClass = "com.booway.umanager.service.DeptService" address = "http://localhost:8080/UserManager/webservice/getAllList?wsdl"/>
+	<!-- 引入配置文件 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.booway.*" />
+
+	<!-- 加载连接数据库的参数配置文件 -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:redis.properties</value> 
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- 阿里 druid 数据库连接池 -->
+	<bean id="dataSource"
+		class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+		<!-- 数据库基本信息配置 -->
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+
+		<property name="filters" value="${jdbc.filters}" />
+
+		<!-- 最大并发连接数 -->
+		<property name="maxActive" value="${jdbc.maxActive}" />
+
+		<!-- 初始化连接数量 -->
+		<property name="initialSize" value="${jdbc.initialSize}" />
+
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${jdbc.maxWait}" />
+
+		<!-- 最小空闲连接数 -->
+		<property name="minIdle" value="${jdbc.minIdle}" />
+
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis"
+			value="${jdbc.timeBetweenEvictionRunsMillis}" />
+
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis"
+			value="${jdbc.minEvictableIdleTimeMillis}" />
+
+		<property name="validationQuery"
+			value="${jdbc.validationQuery}" />
+		<property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+		<property name="testOnReturn" value="${jdbc.testOnReturn}" />
+		<property name="maxOpenPreparedStatements"
+			value="${jdbc.maxOpenPreparedStatements}" />
+
+		<!-- 超过时间限制是否回收 -->
+		<property name="removeAbandoned"
+			value="${jdbc.removeAbandoned}" />
+
+		<!-- 1800 秒，也就是 30 分钟 -->
+		<property name="removeAbandonedTimeout"
+			value="${jdbc.removeAbandonedTimeout}" />
+
+		<!-- 关闭 abanded 连接时输出错误日志 -->
+		<property name="logAbandoned" value="${jdbc.logAbandoned}" />
+	</bean>
+	
+
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:/com/booway/pmanager/sqlmapper/mybatis-config.xml"/>
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations">
+			<array>
+				<value>classpath*:/com/booway/pmanager/sqlmapper/*Mapper.xml</value>
+			</array>
+		</property>
+	</bean>
+
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="annotationClass"
+			value="org.springframework.stereotype.Repository" />
+		<property name="basePackage" value="com.booway.pmanager.dao" />
+		<property name="sqlSessionFactoryBeanName"
+			value="sqlSessionFactory"/>
+	</bean>
+
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:advice id="advice"
+		transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="upda*" propagation="REQUIRED" />
+			<tx:method name="select*" read-only="true"/>
+			<tx:method name="likeSelect*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 切入点 -->
+	<aop:config>
+		<aop:pointcut id="mypoint"
+			expression="execution(* com.booway.pmanager.service.impl.*.*(..))"/>
+		<aop:advisor advice-ref="advice" pointcut-ref="mypoint"/>
+	</aop:config>
+	
+	<!--设置连接池--> 
+     <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig"> 
+	      <property name="maxIdle" value="${redis.maxIdle}"/>
+	      <property name="maxTotal" value="${redis.maxTotal}" /> 
+	      <property name="maxWaitMillis" value="${redis.maxWait}" /> 
+	      <property name="testOnBorrow" value="${redis.testOnBorrow}" /> 
+	      <!-- <property name="testOnReturn" value="${redis.testOnReturn}" />  -->
+     </bean> 
+     <!--设置链接属性 p:database="${redis.db}" 这一个注解为设置选择某个reids的dp，可以不加 默认选择第0个--> 
+     <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
+     p:hostName="${redis.host}" 
+     p:port="${redis.port}" 
+     p:database="${redis.db}"
+     p:pool-config-ref="poolConfig" 
+     p:timeout="100000"/>
+     <!-- Jedis模板配置 -->
+     <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"> 
+     	<property name="connectionFactory" ref="connectionFactory" /> 
+     </bean>
+
+	
+
+</beans>  

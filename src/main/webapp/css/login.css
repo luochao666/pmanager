@@ -1,0 +1,22 @@
+
+
+
+
+body {
+    background-image: url(./img/background.jpg);
+    height: 100vh;
+    background-size: cover;
+    position: relative;
+    background-color: #f2f2f2;
+}
+
+.loginDiv {
+	background-color: #ffffff;
+	width: 500px;
+	height: 350px;
+	position: absolute;
+	top: 200px;
+	left: 520px;
+	opacity:0.6
+}
+

@@ -1,0 +1,105 @@
+.top-head{
+	background-color: #393D49;
+	height: 70px;
+}
+
+.top-left-logo{
+	float: left;
+	font-size: 25px;
+	font-weight: bold;
+	margin: 0px 100px 0px 100px;
+	color: white;
+	line-height: 70px;
+	
+}
+
+.top-mid-nemu{
+	
+	float: left;
+	line-height: 70px;
+	
+}
+
+.top-right-info{
+	float: right;
+	line-height: 70px;
+}
+
+.change-font{
+	font-size: 15px;
+}
+
+.clear{
+	clear: both;
+}
+
+
+.search-form .layui-form-item{
+	clear: none;
+	float: left;
+	margin-bottom: 10px;
+}
+
+.search-form .layui-form-label{
+	padding-right: 0;
+}
+
+.search-div{
+	/* height: 60px; */
+	margin-top: 15px;
+	padding-left: 140px;
+	padding-right: 100px;
+	border-bottom: 1px solid #dddddd;
+}
+
+.search-div .search-form{
+	float: left;
+}
+.search-div .create-btn{
+	float: left;
+	margin-left: 30px;
+}
+
+.search-div .create-btn{
+	float: left;
+	margin-left: 30px;
+}
+
+.main-body{
+	/* background-color: #0000FF; */
+	margin: 20px 150px 50px 150px;
+	height: 400px;
+	padding: 0px 10px;
+	/* width: 1200px; */
+}
+
+/* 以下是弹框的css */
+
+/* 设置整个弹框格式为隐藏 */
+.form-div-hide{
+	display: none;
+}
+
+.pop-form-btn{
+	text-align: center;
+	margin-top: 30px;
+	/* margin-left: 50px; */
+}
+
+.sys-pop-skin .layui-layer-title{
+	background: #009688;
+	color: white;
+}
+.sys-pop-skin .layui-layer-setwin .layui-layer-close1{
+	color: white;
+}
+
+/* .change-switch .layui-form-switch .layui-form-onswitch {
+	background-color: #009688 !important;
+	border-color: #009688 !important;
+	border-radius: 0px !important;
+} */
+
+.layui-btn-sm {
+	font-size: 13px;
+}

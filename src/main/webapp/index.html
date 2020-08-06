@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>请登录</title>
+		<link rel="stylesheet" href="js/layui/css/layui.css" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel = "stylesheet" href="css/login.css"/>
+		<link rel="shortcut icon" href="./css/img/Logo_40.png" type="image/x-icon" />
+	</head>
+	<body style="margin: 0px auto;">
+		<!-- <script src="js/myJs/login.js"></script> -->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/layui/layui.js"></script>
+		<div class="loginDiv">
+			<div class="layui-form" lay-filter="login-form">
+				<div style="width: 400px; margin-top: 70px; margin-left: 25px;">
+					<div class="layui-form-item" style="margin-bottom: 30px;">
+						<label class="layui-form-label">账号：</label> 
+						<div class="layui-input-block">
+							<input type="text" name="loginName" value="" class="layui-input" lay-verify="loginVerify" id="loginName"/>
+						</div>
+					</div>
+					
+					<div class="layui-form-item">
+						<label class="layui-form-label">密码：</label>
+						<div class="layui-input-block">
+							<input type="password" name="pwd" lay-verify="required" class="layui-input" id="pwd"/>
+						</div>
+					</div>					
+					<!-- 按钮 -->
+					<div class="layui-form-item pop-form-btn" style="margin-left: 50px;">
+						<button class="layui-btn" lay-submit lay-filter="login"> 确定</button>
+						<button class="layui-btn layui-btn-primary" onclick="reset()"> 取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			layui.use(['form'],function(){
+				var form = layui.form;
+				
+				form.verify({
+					loginVerify: [
+						/[a-zA-Z0-9]/,'账号中只能出现数字和英文'
+					]
+					});
+					
+				form.on('submit(login)', function (data){
+					var data = layui.form.val('login-form');
+					debugger
+					       $.ajax({
+					           type: 'POST',
+					           url: "project/login",
+					           data: {"loginName": data.loginName, "pwd": data.pwd},
+					           success: function (msg) { // 这里返回一个json 数据					        	   
+					               var url = "";
+					              if (msg.code === 3) {
+					                   url = "page/commissioner.html";
+					                   layer.msg('登陆成功，正在跳转......', {icon: 6});
+					                   setTimeout(function () {
+					                       window.location.href = url;
+					                   }, 2000);
+					               }
+									if (msg.code === 4 || msg.code === 5) {
+									     url = "page/deptManager.html";
+									     layer.msg('登陆成功，正在跳转......', {icon: 6});
+									     setTimeout(function () {
+									         window.location.href = url;
+									     }, 2000);
+									 }
+									if (msg.code === 6) {
+									     url = "page/president.html";
+									     layer.msg('登陆成功，正在跳转......', {icon: 6});
+									     setTimeout(function () {
+									         window.location.href = url;
+									     }, 2000);
+									 }	
+									if(msg.code === 1) {							 
+					                   layer.msg('账号或者密码错误', {icon: 5});	
+									}
+					           },
+					       });
+				});
+			});
+			
+			
+			function reset(){
+				$('#loginName').val("");
+				$('#pwd').val("");
+			}
+			
+		</script>
+	</body>
+</html>

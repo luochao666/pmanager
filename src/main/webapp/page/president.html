@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>项目管理</title>
+		<link rel="stylesheet" href="../js/layui/css/layui.css" />
+		<link rel="stylesheet" href="../css/style.css" />
+		<link rel="shortcut icon" href="../css/img/Logo_40.png" type="image/x-icon" />
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	</head>
+	<body style="margin: 0px auto;">
+		<!-- 头部导航-->
+		<div class="top-head">
+			<div class="top-left-logo">
+				<i style="font-size: 37px; font-style: italic">博微</i> 项目管理系统</div>
+			
+
+			<div class="top-right-info">
+				<ul class="layui-nav">
+					<li class="layui-nav-item" lay-unselect="">
+						<a href="javascript:;">
+							<img src="../css/img/Logo_40.png" class="layui-nav-img">
+							欢迎，总经理
+						</a>
+					</li>
+
+					<li class="layui-nav-item"id="logout"><a><i class="fa fa-power-off fa-1x" > 注销</i></a></li>
+					<span class="layui-nav-bar" style="left: 123px; top : 55px; width:40px"></span>
+				</ul>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+		<!-- 中间查询栏 -->
+		<div class="search-div">
+			<div class="layui-form search-form" lay-filter="itemForm">
+				<!-- 部门下拉表框 -->
+				<div class="layui-form-item" style="font-size: 15px;">
+					<label class="layui-form-label">部门：</label>
+					<div class="layui-input-inline" style="width: 120px;">
+						<select name="deptId" lay-filter="dept-list" class="departmentClass" id="deptId">
+							<option value="">请选择</option>
+						</select>
+					</div>
+				</div>				
+				<!-- 项目名/工程名：输入框-->
+				<div class="layui-form-item">
+					<label class="layui-form-label" style="width: 150px;">项目名/工程名：</label>
+					<div class="layui-input-inline" style="width: 200px;">
+						<input type="text" name="name" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<!-- 查询按钮 -->
+				<div class="layui-form-item">
+					<button type="button" lay-submit lay-filter="search-btn" class="layui-btn" onclick="doSearch();">查询</button>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+
+		<!-- 表格 -->
+		<div class="main-body" style="padding: 0 10px;">
+			<table id="itemTable" lay-filter="itemTable"></table>
+		</div>
+
+
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/layui/layui.js"></script>
+		<script src="../js/myJs/common.js"></script>
+		<script src="../js/myJs/president.js"></script>
+	</body>
+</html>

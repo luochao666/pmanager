@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>项目管理</title>
+		<link rel="stylesheet" href="../js/layui/css/layui.css" />
+		<link rel="stylesheet" href="../css/style.css" />
+		<link rel="shortcut icon" href="../css/img/Logo_40.png" type="image/x-icon" />
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	</head>
+	<body style="margin: 0px auto;">
+		<!-- 头部导航-->
+		<div class="top-head">
+			<div class="top-left-logo">
+				<i style="font-size: 37px; font-style: italic">博微</i> 项目管理系统</div>
+			
+
+			<div class="top-right-info">
+				<ul class="layui-nav">
+					<li class="layui-nav-item" lay-unselect="">
+						<a href="javascript:;">
+							<img src="../css/img/Logo_40.png" class="layui-nav-img">
+							欢迎，罗 超
+						</a>
+					</li>
+
+					<li class="layui-nav-item" id="logout"><a><i class="fa fa-power-off fa-1x" > 注销</i></a></li>
+					<span class="layui-nav-bar" style="left: 123px; top : 55px; width:40px"></span>
+				</ul>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+		<!-- 中间查询栏 -->
+		<div class="search-div">
+			<div class="layui-form search-form" lay-filter="itemForm">
+				<!-- 项目名/工程名：输入框-->
+				<div class="layui-form-item">
+					<label class="layui-form-label" style="width: 150px;">项目名/工程名：</label>
+					<div class="layui-input-inline" style="width: 200px;">
+						<input type="text" name="name" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<!-- 查询按钮 -->
+				<div class="layui-form-item">
+					<button type="button" lay-submit lay-filter="search-btn" class="layui-btn" onclick="doSearch();">查询</button>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<!-- 添加用户 -->
+			<div class="create-btn">
+				<button type="button" class="layui-btn" lay-submit lay-filter="search-btn" onclick="showEditForm();">新建项目</button>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+
+		<!-- 表格 -->
+		<div class="main-body" style="padding: 0 10px;">
+			<table id="itemTable" lay-filter="itemTable"></table>
+		</div>
+
+		<!-- 新增编辑跳窗 设置为display:none,这里是专门为项目栏中的新建工程和编辑工程所准备的-->
+		<div id="addForm" class="form-div-hide">
+			<div class="layui-form" lay-filter="edit-form">
+				<div style="width: 400px; margin-top: 30px;">
+					<!-- itemId -->
+					<div class="layui-form-item" style="display: none;">
+						<label class="layui-form-label">项目ID：</label>
+						<div class="layui-input-block">
+							<input type="text" name="itemId" value="" class="layui-input" style="width: 200px;"/>
+						</div>
+					</div>
+
+					<!-- 工程名 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">工程名：</label>
+						<div class="layui-input-block">
+							<input type="text" name="itemName" lay-verify="required" class="layui-input" id="account" style="width: 200px;"/>
+						</div>
+					</div>
+					<!-- 负责人 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">负责人：</label>
+						<div class="layui-input-block" style="width: 200px;">
+							<select name="worker" lay-filter="dept-list" id="worker" >
+								
+							</select>
+						</div>
+					</div>
+					<!-- 按钮 -->
+					<div class="layui-form-item pop-form-btn">
+						<button class="layui-btn" lay-submit lay-filter="editSubmitBtn"> 确定</button>
+						<button class="layui-btn layui-btn-primary" onclick="editQx();"> 取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div id="editForm" class="form-div-hide">
+			<div class="layui-form" lay-filter="project-form">
+				<div style="width: 400px; margin-top: 30px;">
+					<!-- itemId -->
+					<div class="layui-form-item" style="display: none;">
+						<label class="layui-form-label">项目ID：</label>
+						<div class="layui-input-block">
+							<input type="text" name="itemId" value="" class="layui-input" />
+						</div>
+					</div>
+		
+					<!-- 工程名 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">工程名：</label>
+						<div class="layui-input-block">
+							<input type="text" name="itemName" lay-verify="required" class="layui-input" style="width: 200px;"/>
+						</div>
+					</div>					
+					<!-- 按钮 -->
+					<div class="layui-form-item pop-form-btn">
+						<button class="layui-btn" lay-submit lay-filter="updateProject"> 确定</button>
+						<button class="layui-btn layui-btn-primary" onclick="editQx();"> 取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/html" id="itemToolBar">
+		  {{#  if(d.parentId == "0"){ }}
+				    <button type="button" class="layui-btn layui-btn-sm" lay-event="addProject"><i class="layui-icon"></i></button>
+				    <button type="button" class="layui-btn layui-btn-sm" lay-event="editItem"v><i class="layui-icon"></i></button>
+				    <button type="button" class="layui-btn layui-btn-sm" lay-event="delItem"><i class="layui-icon"></i></button>
+		  {{#  } else { }}
+					<button type="button" class="layui-btn layui-btn-sm" lay-event="addProject"><i class="layui-icon"></i></button>
+					<button type="button" class="layui-btn layui-btn-sm" lay-event="delItem"><i class="layui-icon"></i></button>
+		  {{#  } }}
+		</script>
+
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/layui/layui.js"></script>
+		<script src="../js/myJs/common.js"></script>
+		<script src="../js/myJs/commissioner.js"></script>
+	</body>
+</html>

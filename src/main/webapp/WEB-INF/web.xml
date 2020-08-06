@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>pmanager</display-name>
+	
+	  <welcome-file-list>
+  		<welcome-file>index.html</welcome-file>
+  	  </welcome-file-list>
+	<session-config>
+  		<session-timeout>1440</session-timeout>
+  	</session-config>
+	
+	<!-- Spring和mybatis的配置文件 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring-mybatis.xml</param-value>
+	</context-param>
+	
+	<context-param>
+    	<param-name>webAppRootKey</param-name>
+    	<param-value>project-manager</param-value>
+	</context-param>
+	
+	<context-param>  
+        <param-name>logbackConfigLocation</param-name>  
+        <param-value>classpath:logback.xml</param-value>
+    </context-param>  
+    <listener>  
+        <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>  
+    </listener> 
+	
+	<!-- 编码过滤器 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<async-supported>true</async-supported>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- druid连接池 启用 Web 监控统计功能 start -->
+	<filter>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+		<init-param>
+			<param-name>exclusions</param-name>
+			<param-value>*.js ,*.gif ,*.jpg ,*.png ,*.css ,*.ico ,/druid/*</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+	<!-- druid连接池 启用 Web 监控统计功能 end -->
+
+	<!-- Spring监听器 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- 防止Spring内存溢出监听器 -->
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+
+	<!-- Spring MVC servlet -->
+	<servlet>
+		<servlet-name>SpringMVC</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-mvc.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SpringMVC</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+		<!--在Web.xml中配置CXF监听器 -->
+	<servlet>
+	    <servlet-name>CXFServlet</servlet-name>
+	    <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+	</servlet>
+	  <!-- 注意：<servlet-mapping>下的<url-pattern>指明了服务访问地址的形式,"/*"代表URL地址中，包名称后直接跟服务endpoint地址，
+	  若指明<url-pattern>为/webservice/*,则URL地址为“包名webservice/endpoint?wsdl” -->
+	<servlet-mapping>
+	    <servlet-name>CXFServlet</servlet-name>
+	    <url-pattern>/webservice/*</url-pattern>
+	</servlet-mapping>
+
+</web-app>
